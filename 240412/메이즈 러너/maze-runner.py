@@ -75,7 +75,8 @@ while k > 0 and remain_runner > 0:
         elif s == ts:
             sx, sy = min((sx, sy), (tsx, tsy))
         dbg(f'    sqr update with {i}({rx, ry}, {ex, ey}) {sx, sy} {s}')
-
+    if remain_runner == 0:
+        break
     dbg(f'  square {sx, sy}, {s}')
     for i in range(s):
         for j in range(s):
