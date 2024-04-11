@@ -30,11 +30,14 @@ for _ in range(knight_num):
 trap = list(map(lambda x: list(map(lambda y: 0 if y == 2 else y, x)), chess))
 # 함정은 누적합으로 미리 계산
 for i in row:
-    for j in range(1, map_size):
-        trap[i][j] += trap[i][j - 1]
-for j in col:
-    for i in range(1, map_size):
-        trap[i][j] += trap[i - 1][j]
+    for j in col:
+        trap[i][j] = chess[i][j] if chess[i][j] != 2 else 0
+        if i > 0:
+            trap[i][j] += trap[i - 1][j]
+        if j > 0:
+            trap[i][j] += trap[i][j - 1]
+        if i > 0 and j > 0:
+            trap[i][j] -= trap[i - 1][j - 1]
 
 def get_trap_cnt(x1, y1, x2, y2):
     total = trap[x2][y2]
@@ -59,12 +62,12 @@ def order(k, d, dmg_chk = False):
     chk_set = set()
 
     if d % 2 == 0: # up, down
-        nx = (x if d == 0 else x + h - 1 ) + diff[d][0]
+        nx = (x if d == 0 else x + h - 1) + diff[d][0]
         if nx not in row:
             return CANNOT_MOVE
         s, e = y, y + w
     else: # left, right
-        ny = (y if d == 3 else y + w - 1 ) + diff[d][1]
+        ny = (y if d == 3 else y + w - 1) + diff[d][1]
         if ny not in col:
             return CANNOT_MOVE
         s, e = x, x + h
@@ -80,7 +83,7 @@ def order(k, d, dmg_chk = False):
         for idx, info in enumerate(knight):
             if idx == k: # 자기 자신 제외
                 continue
-            if knight_hp[idx][0] == knight_hp[idx][1]: # 죽은 기사 제외
+            if knight_hp[idx][0] <= knight_hp[idx][1]: # 죽은 기사 제외
                 continue
             if collision_check(nx, ny, *info):
                 chk_set.add((idx, d))
@@ -90,11 +93,12 @@ def order(k, d, dmg_chk = False):
             dmg_queue.append((k, d))
         return CAN_MOVE
 
-    result = CAN_MOVE
     for idx, d in chk_set:
-        result &= order(idx, d, True)
-
-    return result
+        if order(idx, d, True) == CANNOT_MOVE:
+            return CANNOT_MOVE
+    if dmg_chk:
+        dmg_queue.append((k, d))
+    return CAN_MOVE
 
 def dmg_calculate():
     while dmg_queue:
@@ -111,14 +115,14 @@ def dmg_calculate():
 for _ in range(order_cnt):
     i, d = map(int, input().split())
     dbg(f'order {i} {d}')
-    if knight_hp[i - 1][0] == knight_hp[i - 1][1]:
+    if knight_hp[i - 1][0] <= knight_hp[i - 1][1]:
         continue
     if order(i - 1, d) == CAN_MOVE:
         knight[i - 1][0] += diff[d][0]
         knight[i - 1][1] += diff[d][1]
         dmg_calculate()
         parr(knight)
-
+    dmg_queue.clear()
 parr(knight_hp)
 ans = 0
 for max_hp, get_dmg in knight_hp:
