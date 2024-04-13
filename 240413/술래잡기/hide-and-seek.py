@@ -13,8 +13,6 @@ def dbg(txt):
     if DEBUG:
         print(txt)
 
-
-
 dx = [-1, 0, 1, 0]
 dy = [0, 1, 0, -1]
 
@@ -98,6 +96,9 @@ while k > 0 and remain > 0:
             runner[i][0], runner[i][1], runner[i][2] = nx, ny, d
 
     c_idx += 1
+    if c_idx == len(move[c_state]):
+        c_state ^= 1
+        c_idx = 0
     cx, cy, cd = move[c_state][c_idx]
     if field[cx][cy][1] == 0:
         score += turn * len(field[cx][cy][0])
@@ -117,9 +118,7 @@ while k > 0 and remain > 0:
                 runner[s][2] = -1
                 remain -= 1
             field[cx][cy][0].clear()
-    if c_idx == len(move[c_state]):
-        c_state ^= 1
-        c_idx = 0
+    
     turn += 1
     k -= 1
 print(score)
