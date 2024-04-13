@@ -96,7 +96,7 @@ while k > 0 and remain > 0:
             runner[i][0], runner[i][1], runner[i][2] = nx, ny, d
 
     c_idx += 1
-    if c_idx == len(move[c_state]):
+    if c_idx == len(move[c_state]) - 1:
         c_state ^= 1
         c_idx = 0
     cx, cy, cd = move[c_state][c_idx]
