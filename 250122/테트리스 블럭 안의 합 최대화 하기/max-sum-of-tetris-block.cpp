@@ -55,10 +55,7 @@ int32_t main() {
                 int tmp = 0;
                 for (auto& p: t) {
                     int x = i + p.first, y = j + p.second;
-                    if (x < 0 || x >= n || y < 0 || y >= m) {
-                        tmp = 0;
-                        break;
-                    }
+                    if (x < 0 || x >= n || y < 0 || y >= m) continue;
                     tmp += arr[x][y];
                 }
                 ans = max(ans, tmp);
